@@ -1,0 +1,20 @@
+baseURL = 'https://aadarshakhadka.com.np/'
+title = 'Aadarsha Khadka'
+theme = 'hugo-bearblog'
+
+defaultContentLanguage = 'en'
+
+[params]
+author = 'Aadarsha Khadka'
+description = 'aadarshakhadka'
+hideMadeWithLine = true
+
+[[menu.main]]
+name = "Home"
+url = "/"
+weight = 1
+
+[[menu.main]]
+name = "Practice Log"
+url = "/practice-log/"
+weight = 2
