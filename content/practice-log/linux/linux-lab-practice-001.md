@@ -3,7 +3,9 @@ title: "Linux Practice 001"
 date: 2026-06-04
 draft: false
 ---
-
+Date: ``` 2026-06-04
+```
+Topics: whoami
 
 ```
 
