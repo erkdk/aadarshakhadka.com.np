@@ -3,13 +3,13 @@ title: "Linux Practice 001"
 date: 2026-06-04
 draft: false
 ---
-Date: ``` 2026-06-04
+Date: 
+``` 
+2026-06-04
 ```
-Topics: whoami
+Topics covered: whoami
 
 ```
-
-
 aadarkdk@pop-os:~$ ssh aadarsha@192.168.254.67
 aadarsha@192.168.254.67's password: 
 Last login: Thu Jun  4 06:34:06 2026
