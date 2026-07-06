@@ -1,5 +1,5 @@
 ---
-title: "Practice 001 — Basic Shell Commands"
+title: "Practice 001 — General Shell Commands"
 date: 2026-06-05
 draft: false
 ---
