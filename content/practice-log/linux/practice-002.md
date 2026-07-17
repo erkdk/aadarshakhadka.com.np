@@ -34,6 +34,7 @@ Everything in Linux exists under `/`, including:
 - devices
 - mounted filesystems
 - virtual filesystems
+
 Every absolute path starts from `/`.
 
 ```
@@ -84,7 +85,8 @@ fuse             rfkill        tty12     tty31  tty50  ttyS3    vcsa5
 hpet             rtc           tty13     tty32  tty51  udmabuf  vcsa6
 [aadarsha@labserver /]$ 
 
-# /etc ---> contains host-specific configuration files, example: Network configuration, SSH configuration, User authentication, DNS configuration, Package manager configuration, configuration files for ( mail server, web server, database server, proxy server, ... )
+# /etc ---> contains host-specific configuration files, example: Network configuration, SSH configuration, User authentication, DNS configuration, Package manager configuration,
+ configuration files for ( mail server, web server, database server, proxy server, ... )
 
 [aadarsha@labserver /]$ ls /etc
 adjtime                  firewalld       magic                     samba
@@ -294,10 +296,7 @@ drwxr-xr-x.   3 root root   22 May 26 15:36 home
 lrwxrwxrwx.   1 root root    7 Apr  2  2025 lib -> usr/lib
 lrwxrwxrwx.   1 root root    9 Apr  2  2025 lib64 -> usr/lib64
 drwxr-xr-x.   2 root root    6 Apr  2  2025 media
-drwxr-xr-x.   2 root root    6 Apr  2  2025 mnt
-drwxr-xr-x.   2 root root    6 Apr  2  2025 opt
-dr-xr-xr-x. 185 root root    0 Jun  4 21:25 proc
-dr-xr-x---.   3 root root  147 May 26 15:44 root
+...
 drwxr-xr-x.  32 root root  880 Jun  4 21:25 run
 lrwxrwxrwx.   1 root root    8 Apr  2  2025 sbin -> usr/sbin
 drwxr-xr-x.   2 root root    6 Apr  2  2025 srv
@@ -331,5 +330,4 @@ Examples:
 - /run
 
 Generated dynamically by the kernel.
-
 Nothing here is permanently stored on disk.
