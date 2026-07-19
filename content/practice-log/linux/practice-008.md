@@ -28,18 +28,11 @@ shutdown:x:6:0:shutdown:/sbin:/sbin/shutdown
 
 [aadarsha@labserver ~]$ head passwd 
 root:x:0:0:Super User:/root:/bin/bash
-bin:x:1:1:bin:/bin:/usr/sbin/nologin
-daemon:x:2:2:daemon:/sbin:/usr/sbin/nologin
-adm:x:3:4:adm:/var/adm:/usr/sbin/nologin
-lp:x:4:7:lp:/var/spool/lpd:/usr/sbin/nologin
-sync:x:5:0:sync:/sbin:/bin/sync
-shutdown:x:6:0:shutdown:/sbin:/sbin/shutdown
-halt:x:7:0:halt:/sbin:/sbin/halt
-mail:x:8:12:mail:/var/spool/mail:/usr/sbin/nologin
+...
 operator:x:11:0:operator:/root:/usr/sbin/nologin
 [aadarsha@labserver ~]$ 
 
-# by default 10 lines
+# By default 10 lines
 
 [aadarsha@labserver ~]$ head -2 passwd 
 root:x:0:0:Super User:/root:/bin/bash
@@ -748,11 +741,11 @@ aadarsha:x:1000:1000:Aadarsha Khadka:/home/aadarsha:/bin/CASH
 i'm a good boy
 this is the beautiful girl 
 how are you 
-is this boy who is the best man in the world
-understand your situation and move on baby
+is this your baby boy?
+boy understand fundamental concepts
 good morning 
-are you a boy or girl?
-Boy is running and you boy?
+why are visiting the USA?
+Boy is running?
 [aadarsha@labserver ~]$ 
 
 [aadarsha@labserver ~]$ sed -i 's/boy/BOY/g' testdatafile 
@@ -761,11 +754,11 @@ Boy is running and you boy?
 i'm a good BOY
 this is the beautiful girl 
 how are you 
-is this BOY who is the best man in the world
-understand your situation and move on baby
+is this your baby BOY?
+BOY understand the fundamental concepts
 good morning 
-are you a BOY or girl?
-Boy is running and you BOY?
+why are visiting the USA?
+Boy is running?
 [aadarsha@labserver ~]$ 
 
 [aadarsha@labserver ~]$ 
@@ -773,5 +766,5 @@ Boy is running and you BOY?
 # To search whole line
 
 [aadarsha@labserver ~]$ grep 'boy and' testdatafile 
-
+[aadarsha@labserver ~]$ 
 ```
