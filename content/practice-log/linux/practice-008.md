@@ -1,5 +1,5 @@
 ---
-title: "Practice 008 —  TEXT processing and Data Manipulation"
+title: "Practice 008 —  Text processing, Data Manipulation and Finding files"
 date: 2026-06-12
 draft: false
 ---
@@ -7,7 +7,7 @@ draft: false
 ### Terminal Session
 
 ```
-# TEXT processing and Data Manipulation
+# Text processing and Data Manipulation
 
 # commands: head, tail, cat, less, wc, sort, cut, tee, uniq
 
@@ -767,4 +767,169 @@ Boy is running?
 
 [aadarsha@labserver ~]$ grep 'boy and' testdatafile 
 [aadarsha@labserver ~]$ 
+```
+
+### File Searching and finding
+```
+# File Search
+
+# Searching Files using 'find' command
+ 
+# find [path] [options] <argument>
+
+# -atime <+N/-N/N> ---> performs access-time bases search (N-->Day)
+
+# -mtime <+N/-N/N> ---> performs modification-time bases search (N-->Day)
+
+# -ntime <name> ---> performs name-based bases search (case sensitive)
+ 
+# -intime <name> ---> performs name-based bases search (case insensitive)
+
+# -size <+N/-N/N> --> performs size-based search
+
+# -user <owner> --> performs user-ownership based search
+
+# -group <group> --> performs group-ownership based search
+
+# -type <type> --> 
+
+[aadarsha@labserver ~]$ find / -name passwd 2>/dev/null 
+/sys/fs/selinux/class/passwd
+/sys/fs/selinux/class/passwd/perms/passwd
+/etc/passwd
+/etc/pam.d/passwd
+/usr/bin/passwd
+/usr/share/bash-completion/completions/passwd
+[aadarsha@labserver ~]$ 
+
+[aadarsha@labserver ~]$ find /etc -name passwd 2>/dev/null 
+/etc/passwd
+/etc/pam.d/passwd
+[aadarsha@labserver ~]$ 
+
+[aadarsha@labserver ~]$ touch /tmp/passwd
+[aadarsha@labserver ~]$ 
+[aadarsha@labserver ~]$ find / -name passwd 2>/dev/null 
+/sys/fs/selinux/class/passwd
+/sys/fs/selinux/class/passwd/perms/passwd
+/tmp/passwd
+/etc/passwd
+/etc/pam.d/passwd
+/usr/bin/passwd
+/usr/share/bash-completion/completions/passwd
+[aadarsha@labserver ~]$ 
+
+[aadarsha@labserver ~]$ touch /tmp/Passwd
+[aadarsha@labserver ~]$ 
+[aadarsha@labserver ~]$ find / -name passwd 2>/dev/null 
+/sys/fs/selinux/class/passwd
+/sys/fs/selinux/class/passwd/perms/passwd
+/tmp/passwd
+/etc/passwd
+/etc/pam.d/passwd
+/usr/bin/passwd
+/usr/share/bash-completion/completions/passwd
+[aadarsha@labserver ~]$ 
+
+[aadarsha@labserver ~]$ find / -iname passwd 2>/dev/null 
+/sys/fs/selinux/class/passwd
+/sys/fs/selinux/class/passwd/perms/passwd
+/tmp/passwd
+/tmp/Passwd
+/etc/passwd
+/etc/pam.d/passwd
+/usr/bin/passwd
+/usr/share/bash-completion/completions/passwd
+[aadarsha@labserver ~]$ 
+
+[aadarsha@labserver ~]$ find / -iname passwd 2>/dev/null | wc -l
+8
+[aadarsha@labserver ~]$ 
+
+[aadarsha@labserver ~]$ find / -name passwd 2>/dev/null  | wc -l
+7
+[aadarsha@labserver ~]$ 
+
+[aadarsha@labserver ~]$ find / -atime -7 | wc -l
+find: ‘/boot/efi/EFI/centos’: Permission denied
+find: ‘/boot/grub2’: Permission denied
+find: ‘/boot/loader/entries’: Permission denied
+find: ‘/proc/tty/driver’: Permission denied
+find: ‘/proc/1/task/1/fd’: Permission denied
+...
+find: ‘/usr/libexec/initscripts/legacy-actions/auditd’: Permission denied
+find: ‘/home/aadarsha/extracted/var/log/private’: Permission denied
+find: ‘/home/aadarsha/extracted/var/log/samba’: Permission denied
+find: ‘/home/aadarsha/extracted/var/log/audit’: Permission denied
+find: ‘/home/aadarsha/extracted/var/log/sssd’: Permission denied
+find: ‘/home/aadarsha/extracted/var/log/chrony’: Permission denied
+87254
+[aadarsha@labserver ~]$
+
+[aadarsha@labserver ~]$ find / -atime -7 2>/dev/null | wc -l
+87254
+[aadarsha@labserver ~]$ 
+
+[aadarsha@labserver ~]$ find / -mtime -7 2>/dev/null | wc -l            # modified
+77799
+[aadarsha@labserver ~]$ 
+[aadarsha@labserver ~]$ find /etc -mtime -7 2>/dev/null | wc -l         # modified
+7
+[aadarsha@labserver ~]$ 
+[aadarsha@labserver ~]$ 
+[aadarsha@labserver ~]$ find /etc -atime -7 2>/dev/null | wc -l         # accessed
+685
+[aadarsha@labserver ~]$ 
+
+[aadarsha@labserver ~]$ find /etc -mtime -7 2>/dev/null                 # modified
+/etc
+/etc/resolv.conf
+/etc/profile.d
+/etc/bashrc
+/etc/profile
+/etc/ld.so.cache
+/etc/pkgconfig
+[aadarsha@labserver ~]$ 
+
+# focused auditing and non focused auditing in security auditing
+
+# focused auditing and non-focused auditing in security auditing
+
+# safety and performance can not be achieved at a time
+
+
+# finding based on size
+
+[aadarsha@labserver ~]$ ls /var/l
+lib/   local/ lock/  log/   
+[aadarsha@labserver ~]$ ls /var/log/
+anaconda  cron-20260611    hawkey.log           messages           secure-20260611
+audit     dnf.librepo.log  hawkey.log-20260611  messages-20260611  spooler
+btmp      dnf.log          lastlog              private            spooler-20260611
+chrony    dnf.rpm.log      maillog              samba              sssd
+cron      firewalld        maillog-20260611     secure             wtmp
+[aadarsha@labserver ~]$ 
+
+[aadarsha@labserver ~]$ find /var -size +10M >/dev/null 
+find: ‘/var/lib/selinux/targeted/active’: Permission denied
+find: ‘/var/lib/selinux/final’: Permission denied
+find: ‘/var/lib/private’: Permission denied
+...
+find: ‘/var/tmp/systemd-private-6d5f834212da46da9320190dce0efa12-systemd-logind.service-WsqjBK’: Permission denied
+[aadarsha@labserver ~]$ 
+
+[aadarsha@labserver ~]$ find /var -size +10M 2>/dev/null 
+/var/cache/dnf/appstream-25519c512d836b42/repodata/28fcbe99d124870c057e25d821ae6d6d4c8fa1e58c8609ffe3511cdf0fd53b66-filelists.xml.gz
+/var/cache/dnf/appstream-filenames.solvx
+[aadarsha@labserver ~]$ 
+
+[aadarsha@labserver ~]$ find /var -size +10M 2>/dev/null 
+/var/cache/dnf/appstream-25519c512d836b42/repodata/28fcbe99d124870c057e25d821ae6d6d4c8fa1e58c8609ffe3511cdf0fd53b66-filelists.xml.gz
+/var/cache/dnf/appstream-filenames.solvx
+[aadarsha@labserver ~]$ 
+
+[aadarsha@labserver ~]$ ls -lh /var/cache/dnf/appstream-25519c512d836b42/repodata/28fcbe99d124870c057e25d821ae6d6d4c8fa1e58c8609ffe3511cdf0fd53b66-filelists.xml.gz 
+-rw-r--r--. 1 root root 16M Jun  8 09:51 /var/cache/dnf/appstream-25519c512d836b42/repodata/28fcbe99d124870c057e25d821ae6d6d4c8fa1e58c8609ffe3511cdf0fd53b66-filelists.xml.gz
+[aadarsha@labserver ~]$ 
+
 ```
