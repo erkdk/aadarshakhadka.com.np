@@ -7,7 +7,6 @@ draft: false
 ### Terminal Session
 
 ```
-
 # File Search, Redirection & Output Control
 
 # Standard Input/Output Devices
