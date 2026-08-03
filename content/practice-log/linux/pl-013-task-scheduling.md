@@ -9,7 +9,7 @@ draft: false
   > cron jobs
 
 #### Task Scheduling ( **Use when:** )
-> Run backups, Rotate logs, Clean temp files, Restart services, Send reports, Health checks, Database dumps, Automation scripts
+> Run backups, Rotate logs, Clean temp files, Restart services, Send reports, Health checks, Database dumps, Automation scripts, etc ...
 
  #### Two scheduling methods
 
