@@ -1207,7 +1207,7 @@ authorized_keys  known_hosts  known_hosts.old
           Machine A  --------->  Machine B
           Machine A  --------->  Machine C
 ```
- 	#### Authentication Process
+#### Authentication Process
 ```
         	                         SSH Login
 
