@@ -1,5 +1,5 @@
 ---
-title: "System Administration with CentOS Stream 10"
+title: "System Administration"
 date: 
 draft: 
 ---
