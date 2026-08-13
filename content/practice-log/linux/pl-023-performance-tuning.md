@@ -1,6 +1,6 @@
 ---
 title: "PL - 023 — System Performance Tuning with Tuned Daemon"
-date: 2026-08-13
+date: 2026-08-14
 draft: false
 ---
 
