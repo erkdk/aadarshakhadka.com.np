@@ -1,5 +1,5 @@
 ---
-title: "System Administration"
+title: "Linux System Administration"
 date: 
 draft: 
 ---

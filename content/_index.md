@@ -8,8 +8,6 @@ Registered Electronics, Communication, and Information Engineer with the Nepal E
 
 My focus is on System Administration, Systems Engineering, Cloud Computing, and DevSecOps, with an emphasis on building, securing, automating, and operating reliable systems. I am particularly interested in Linux, infrastructure, networking, cloud technologies, and the engineering principles behind dependable systems. 
 
-Outside of tech, I enjoy swimming and take an interest in mathematics and economics.
-
 ---
 
 *A personal knowledge base for technical documentation, hands-on practice, and reference.*
