@@ -1,14 +1,18 @@
 ---
-title: "Practice 003 — Redirecting Output and Using Wildcards"
+title: "PL - 003 — Process I/O Redirection, Shell Expansions, and Globs"
 date: 2026-06-07
 draft: false
 ---
+### Process Grouping & Output Redirection
 
+The shell manages process input/output via file descriptors (FDs). By default:
+* `0`: Standard Input (`stdin`)
+* `1`: Standard Output (`stdout`)
+* `2`: Standard Error (`stderr`)
+
+The redirection operator `>` modifies FD 1 for the immediate command preceding it. Command chaining via `;` runs execution sequentially without grouping output streams.
 ### Terminal Session
-
 ```
-# using () ---> redirect the output on the file 
-
 [aadarsha@labserver ~]$ date; cal ; ls
 Sun Jun  7 06:48:59 AM +0545 2026
       June 2026     
@@ -20,6 +24,9 @@ Su Mo Tu We Th Fr Sa
 28 29 30            
                     
 dir1  dir2  dir3  file1  file2  file3
+
+# In sequential execution, `>` applies ONLY to the final command (`ls`).
+# `date` and `cal` send output to stdout (terminal); `ls` writes to `command_output`.
 
 [aadarsha@labserver ~]$ date; cal; ls > command_output		# Only output of ls command is saved
 Sun Jun  7 06:49:34 AM +0545 2026
@@ -41,8 +48,12 @@ file2
 file3
 [aadarsha@labserver ~]$						
 
+# Command Grouping with Subshell: ()
+# Parentheses spawn a child process subshell via fork(). 
+# Redirection applies to the entire subshell's aggregated output stream.
+
 [aadarsha@labserver ~]$ (date; cal; ls) > command_output      # using () ---> output of all commands is saved
-[aadarsha@labserver ~]$ 
+ 
 [aadarsha@labserver ~]$ cat command_output 
 Sun Jun  7 06:50:12 AM +0545 2026
       June 2026     
@@ -62,6 +73,11 @@ file2
 file3
 [aadarsha@labserver ~]$
 
+# Alternative: In-Process Grouping {}
+# Braces group execution within the CURRENT shell (no subshell overhead).
+# Note: Requires a space after `{` and a trailing semicolon before `}`.
+[aadarsha@labserver ~]$ { date; cal; ls; } > command_output
+
 # use of {} ---> use to define the range
 # creating multiple Dir/Sub-dir at a time
 
@@ -69,32 +85,34 @@ file3
 [aadarsha@labserver ~]$ 
 
 [aadarsha@labserver ~]$ mkdir dir{1..25}
+
 [aadarsha@labserver ~]$ ls
 dir1  dir10  dir11  dir12  dir13  dir14  dir15  dir16  dir17  dir18  dir19  dir2  dir20  dir21  dir22  dir23  dir24  dir25  dir3  dir4  dir5  dir6  dir7  dir8  dir9
-[aadarsha@labserver ~]$ 
 
 [aadarsha@labserver ~]$ rmdir dir{10..25}
 
 [aadarsha@labserver ~]$ ls
 dir1  dir2  dir3  dir4  dir5  dir6  dir7  dir8  dir9
-[aadarsha@labserver ~]$ 
 
 [aadarsha@labserver ~]$ touch file{10..20}
-[aadarsha@labserver ~]$ 
+
 [aadarsha@labserver ~]$ ls
 dir1  dir2  dir3  dir4  dir5  dir6  dir7  dir8  dir9  file10  file11  file12  file13  file14  file15  file16  file17  file18  file19  file20
+
 [aadarsha@labserver ~]$ rm -f file{16..20} 
+
 [aadarsha@labserver ~]$ ls
 dir1  dir2  dir3  dir4  dir5  dir6  dir7  dir8  dir9  file10  file11  file12  file13  file14  file15
-[aadarsha@labserver ~]$ 
 
 [aadarsha@labserver ~]$ rm -r *
+
 [aadarsha@labserver ~]$ ls
-[aadarsha@labserver ~]$ 
 
 [aadarsha@labserver ~]$ mkdir -p dir1/dir2/dir3/dir4/dir5
+
 [aadarsha@labserver ~]$ ls
 dir1
+
 [aadarsha@labserver ~]$ tree
 .
 └── dir1
@@ -104,17 +122,17 @@ dir1
                 └── dir5
 
 6 directories, 0 files
-[aadarsha@labserver ~]$ 
 
 [aadarsha@labserver ~]$ ls
 dir1
  
 # use of {} and -p
 
-[aadarsha@labserver ~]$ 
 [aadarsha@labserver ~]$ mkdir -p testcompany/{service/{development,devops/{cloud/{aws,azure,gcp},onpremise},security,AI},support/{technical,others},management}
+
 [aadarsha@labserver ~]$ ls
 dir1  testcompany
+
 [aadarsha@labserver ~]$ tree testcompany/
 testcompany/
 ├── management
@@ -141,25 +159,22 @@ testcompany/
 dir1  testcompany
 
 [aadarsha@labserver ~]$ vi "my file"            # file name with space inside " "
+
 [aadarsha@labserver ~]$ ls
  dir1  'my file'   testcompany
-[aadarsha@labserver ~]$ 
 
 [aadarsha@labserver ~]$ cat my\ file		# escape sequence --> \
 This is the test file.
-[aadarsha@labserver ~]$ 
-
 
 # creating a hidden file
 
 [aadarsha@labserver ~]$ touch .secretdata
+
 [aadarsha@labserver ~]$ ls
  dir1  'my file'   testcompany
-[aadarsha@labserver ~]$ 
 
 [aadarsha@labserver ~]$ ls -a
  .   ..   .bash_history   .bash_logout   .bash_profile   .bashrc   dir1  'my file'   .secretdata   testcompany
-[aadarsha@labserver ~]$ 
 
 [aadarsha@labserver ~]$ vi .secretdata 
 
@@ -178,19 +193,29 @@ drwxr-xr-x. 3 aadarsha aadarsha   18 Jun  7 07:02  dir1
 -rw-r--r--. 1 aadarsha aadarsha   23 Jun  7 07:29 'my file'
 -rw-r--r--. 1 aadarsha aadarsha   24 Jun  7 07:54  .secretdata
 drwxr-xr-x. 5 aadarsha aadarsha   54 Jun  7 07:24  testcompany
-[aadarsha@labserver ~]$
- 
+``` 
 
-# using wildcard characters
+### Wildcard Characters
+```
+# ?	      --> matches exactly one character
+# *  	  --> matches zero or more characters
 
-# ?	  --> matches any single character
-# *  	  --> matches no. of characters
-# [a-z]   --> matches within the range
-# [^a-z]  --> matches out of the range
-# [az]    --> matches within the set
-# [^az]   --> matches out of the set
+# [set]   --> matches one character within the set
+   # [az]    --> matches within the set
+   # [a-z]   --> matches within the range
+   # eg: ls [b-p]*
+
+# [!set] or [^set] --> Matches one character NOT in the set
+    # [^az]   --> matches out of the set
+    # [^a-z]  --> matches out of the range
+    # eg: ls [!b-p]*
+
+# [[:class:]]	--> Locale-safe POSIX character class	
+    # eg: ls [[:lower:]]* 
+
 
 [aadarsha@labserver ~]$ cd /
+
 [aadarsha@labserver /]$ ls
 afs  bin  boot  dev  etc  home  lib  lib64  media  mnt  opt  proc  root  run  sbin  srv  sys  tmp  usr  var
 
@@ -254,6 +279,7 @@ etc  home  sbin  srv  sys
 [aadarsha@labserver /]$ pwd
 /
 [aadarsha@labserver /]$ cd ~			# home directory
+
 [aadarsha@labserver ~]$ pwd
 /home/aadarsha
 
@@ -261,6 +287,8 @@ etc  home  sbin  srv  sys
  dir1  'my file'   testcompany
 
 # path navigation
+  # Absolute Path: Fully qualified route evaluated from the root directory (/)
+  # Relative Path: Route relative to the Current Working Directory (.) using parent (..)
 
 [aadarsha@labserver ~]$ tree 
 .
@@ -320,11 +348,8 @@ dir5
 # mv [options] <source> <destination>
 
 # [option]
- 
-# -i  -->  ask for confirmation
-# -f  -->  forcefully overwrite
-# -i  -->  ask for confirmation  (default for root) 
-# -f  --> forcefully overwrite   (default for normal users)
+  # -i  -->  ask for confirmation  (default for root) 
+  # -f  -->  forcefully overwrite   (default for normal users)
 
 [aadarsha@labserver ~]$ pwd
 /home/aadarsha
@@ -340,5 +365,23 @@ dir1  testcompany
 
 [aadarsha@labserver ~]$ cd dir1/dir2/dir3/
 [aadarsha@labserver dir3]$ 
+
 [aadarsha@labserver dir3]$ vi ~?
 ```
+---
+### Summary
+- 
+- Subshell () vs Grouping {}:
+  () forks a new child process to run grouped commands;
+  {} groups execution within the existing shell process.
+  Process Control: Subshells () execute fork(), while {} executes in-process.
+
+- Expansion Order: 
+  Expansion Mechanics: Brace expansions {} evaluate before Glob expansions (*, ?, []).
+
+- File Descriptors: 
+  Standard redirection (>) acts on FD 1 (stdout). To capture error streams, use 2> (stderr) or &> (both stdout and stderr).
+
+- POSIX Classes: 
+  Range globs like [a-z] can be locale-sensitive. Use [[:lower:]] or [[:alpha:]] for deterministic cross-system behavior.
+---
