@@ -1,16 +1,38 @@
 ---
-title: "Practice 008 —  Text processing, Data Manipulation and Finding files"
+title: "PL - 008 —  Text Processing, Data Manipulation, Pipelines, and File Searching"
 date: 2026-06-12
 draft: false
 ---
+### Linux Text Processing & File Auditing
+ Text processing and file auditing are treated as high-performance streaming pipelines based on three core principles:
+* **The Unix Philosophy:** Every utility is single-purpose, optimized for memory efficiency, and processes text streams line-by-line via standard input (`stdin`) and standard output (`stdout`).
+* **The Stream Pipeline (`|`):** Data manipulation avoids expensive disk I/O operations by processing transformations entirely in volatile memory (RAM) as data moves between tools.
+* **Decoupled Automation:** Combining discovery (`find`), stream editing (`sed`), and pattern filtration (`grep`) allows sysadmins to parse gigabytes of system log telemetry or apply configuration patches across thousands of nodes simultaneously without interactive UI overhead.
 
+---
+| Command / Flag |  Syntax  |  Purpose  |
+| :--- | :--- | :--- |
+| **`head`** | `head -n <N> <file>` | Views the first $N$ lines of a text stream (Default: 10). |
+| **`tail`** | `tail -n <N> <file>` | Views the last $N$ lines of a text stream (Default: 10). |
+| **`tail -f`** | `tail -f <file>` | Live-streams appending data entries (e.g., tracking active logs). |
+| **`sort`** | `sort -nrk <idx> -t '<delim>'` | Orders files numerically (`-n`), in reverse (`-r`), targeting a key field (`-k`). |
+| **`cut`** | `cut -d '<delim>' -f <fields>` | Extracts explicit columns or field index ranges from a data matrix. |
+| **`\|` (Pipeline)** | `command1 \| command2` | Binds standard output (`stdout`) of one process to input (`stdin`) of the next. |
+| **`uniq`** | `uniq -c` | Deduplicates text layers. `-c` appends hit counts. **Requires pre-sorted input.** |
+| **`tee`** | `tee <output_file>` | Splits data streams. Mirrors input to both `stdout` and a disk file. |
+| **`wc`** | `wc -l` | Counts structural text metrics. `-l` isolates line totals. |
+| **`grep`** | `grep '<pattern>' <file>` | Filters data streams for specific text string patterns or regular expressions. |
+| **`egrep`** | `egrep 'A\|B' <file>` | Extended pattern engine. Uses logical OR criteria structures natively. |
+| **`sed`** | `sed 's/old/new/g' <file>` | Stream editor for non-destructive string transformations. |
+| **`sed -i`** | `sed -i 's/old/new/g' <file>` | In-place stream modification. Overwrites disk files directly. |
+| **`find`** | `find <path> <expressions>` | Scans system trees to find files by ownership, timestamps, name, or size metrics. |
+| **`2>/dev/null`** | `command 2>/dev/null` | Shell error redirector. Suppresses access permission warnings from standard error. |
+---
 ### Terminal Session
-
 ```
 # Text processing and Data Manipulation
 
 # commands: head, tail, cat, less, wc, sort, cut, tee, uniq
-
 # pipeline
 # grep, sed
 
@@ -37,7 +59,6 @@ operator:x:11:0:operator:/root:/usr/sbin/nologin
 [aadarsha@labserver ~]$ head -2 passwd 
 root:x:0:0:Super User:/root:/bin/bash
 bin:x:1:1:bin:/bin:/usr/sbin/nologin
-[aadarsha@labserver ~]$ 
 
 [aadarsha@labserver ~]$ head -10 passwd 
 root:x:0:0:Super User:/root:/bin/bash
@@ -59,7 +80,6 @@ shutdown:x:6:0:shutdown:/sbin:/sbin/shutdown
 [aadarsha@labserver ~]$ 
 
 [aadarsha@labserver ~]$ vi passwd 
-[aadarsha@labserver ~]$ 
 
 [aadarsha@labserver ~]$ tail -5 /etc/passwd
 sssd:x:998:997:User for sssd:/run/sssd/:/sbin/nologin
@@ -86,16 +106,10 @@ tail: cannot open '/var/log/secure' for reading: Permission denied
 [aadarsha@labserver ~]$ sudo su
 [sudo] password for aadarsha: 
 [root@labserver aadarsha]# 
-[root@labserver aadarsha]# 
+
 [root@labserver aadarsha]# tail /var/log/secure 
 Jun  9 05:24:00 labserver su[2184]: pam_unix(su:session): session closed for user root
-Jun  9 05:24:00 labserver sudo[2179]: pam_unix(sudo:session): session closed for user root
-Jun  9 06:04:24 labserver sudo[2754]: aadarsha : TTY=pts/0 ; PWD=/home/aadarsha ; USER=root ; COMMAND=/bin/su
-Jun  9 06:04:24 labserver sudo[2754]: pam_unix(sudo:session): session opened for user root(uid=0) by aadarsha(uid=1000)
-Jun  9 06:04:24 labserver su[2761]: pam_unix(su:session): session opened for user root(uid=0) by aadarsha(uid=0)
-Jun  9 06:04:45 labserver su[2761]: pam_unix(su:session): session closed for user root
-Jun  9 06:04:45 labserver sudo[2754]: pam_unix(sudo:session): session closed for user root
-Jun  9 06:20:51 labserver sudo[2991]: aadarsha : TTY=pts/0 ; PWD=/home/aadarsha ; USER=root ; COMMAND=/bin/su
+...
 Jun  9 06:20:51 labserver sudo[2991]: pam_unix(sudo:session): session opened for user root(uid=0) by aadarsha(uid=1000)
 Jun  9 06:20:51 labserver su[2996]: pam_unix(su:session): session opened for user root(uid=0) by aadarsha(uid=0)
 [root@labserver aadarsha]# 
@@ -116,23 +130,7 @@ Jun  9 06:04:24 labserver sudo[2754]: pam_unix(sudo:session): session opened for
 root:x:0:0:Super User:/root:/bin/bash
 bin:x:1:1:bin:/bin:/usr/sbin/nologin
 daemon:x:2:2:daemon:/sbin:/usr/sbin/nologin
-adm:x:3:4:adm:/var/adm:/usr/sbin/nologin
-lp:x:4:7:lp:/var/spool/lpd:/usr/sbin/nologin
-sync:x:5:0:sync:/sbin:/bin/sync
-shutdown:x:6:0:shutdown:/sbin:/sbin/shutdown
-halt:x:7:0:halt:/sbin:/sbin/halt
-mail:x:8:12:mail:/var/spool/mail:/usr/sbin/nologin
-operator:x:11:0:operator:/root:/usr/sbin/nologin
-games:x:12:100:games:/usr/games:/usr/sbin/nologin
-ftp:x:14:50:FTP User:/var/ftp:/usr/sbin/nologin
-nobody:x:65534:65534:Kernel Overflow User:/:/usr/sbin/nologin
-tss:x:59:59:Account used for TPM access:/:/usr/sbin/nologin
-systemd-oom:x:999:999:systemd Userspace OOM Killer:/:/sbin/nologin
-dbus:x:81:81:System Message Bus:/:/usr/sbin/nologin
-sssd:x:998:997:User for sssd:/run/sssd/:/sbin/nologin
-sshd:x:74:74:Privilege-separated SSH:/usr/share/empty.sshd:/usr/sbin/nologin
-chrony:x:997:996:chrony system user:/var/lib/chrony:/sbin/nologin
-systemd-coredump:x:995:995:systemd Core Dumper:/:/usr/sbin/nologin
+...
 aadarsha:x:1000:1000:Aadarsha Khadka:/home/aadarsha:/bin/bash
 [aadarsha@labserver ~]$ 
 
@@ -147,24 +145,7 @@ logout
 
 [aadarsha@labserver ~]$ sort /etc/passwd
 aadarsha:x:1000:1000:Aadarsha Khadka:/home/aadarsha:/bin/bash
-adm:x:3:4:adm:/var/adm:/usr/sbin/nologin
-bin:x:1:1:bin:/bin:/usr/sbin/nologin
-chrony:x:997:996:chrony system user:/var/lib/chrony:/sbin/nologin
-daemon:x:2:2:daemon:/sbin:/usr/sbin/nologin
-dbus:x:81:81:System Message Bus:/:/usr/sbin/nologin
-ftp:x:14:50:FTP User:/var/ftp:/usr/sbin/nologin
-games:x:12:100:games:/usr/games:/usr/sbin/nologin
-halt:x:7:0:halt:/sbin:/sbin/halt
-lp:x:4:7:lp:/var/spool/lpd:/usr/sbin/nologin
-mail:x:8:12:mail:/var/spool/mail:/usr/sbin/nologin
-nobody:x:65534:65534:Kernel Overflow User:/:/usr/sbin/nologin
-operator:x:11:0:operator:/root:/usr/sbin/nologin
-root:x:0:0:Super User:/root:/bin/bash
-shutdown:x:6:0:shutdown:/sbin:/sbin/shutdown
-sshd:x:74:74:Privilege-separated SSH:/usr/share/empty.sshd:/usr/sbin/nologin
-sssd:x:998:997:User for sssd:/run/sssd/:/sbin/nologin
-sync:x:5:0:sync:/sbin:/bin/sync
-systemd-coredump:x:995:995:systemd Core Dumper:/:/usr/sbin/nologin
+...
 systemd-oom:x:999:999:systemd Userspace OOM Killer:/:/sbin/nologin
 tss:x:59:59:Account used for TPM access:/:/usr/sbin/nologin
 [aadarsha@labserver ~]$ 
@@ -183,22 +164,7 @@ tss:x:59:59:Account used for TPM access:/:/usr/sbin/nologin
 root:x:0:0:Super User:/root:/bin/bash
 bin:x:1:1:bin:/bin:/usr/sbin/nologin
 daemon:x:2:2:daemon:/sbin:/usr/sbin/nologin
-adm:x:3:4:adm:/var/adm:/usr/sbin/nologin
-lp:x:4:7:lp:/var/spool/lpd:/usr/sbin/nologin
-sync:x:5:0:sync:/sbin:/bin/sync
-shutdown:x:6:0:shutdown:/sbin:/sbin/shutdown
-halt:x:7:0:halt:/sbin:/sbin/halt
-mail:x:8:12:mail:/var/spool/mail:/usr/sbin/nologin
-operator:x:11:0:operator:/root:/usr/sbin/nologin
-games:x:12:100:games:/usr/games:/usr/sbin/nologin
-ftp:x:14:50:FTP User:/var/ftp:/usr/sbin/nologin
-tss:x:59:59:Account used for TPM access:/:/usr/sbin/nologin
-sshd:x:74:74:Privilege-separated SSH:/usr/share/empty.sshd:/usr/sbin/nologin
-dbus:x:81:81:System Message Bus:/:/usr/sbin/nologin
-systemd-coredump:x:995:995:systemd Core Dumper:/:/usr/sbin/nologin
-chrony:x:997:996:chrony system user:/var/lib/chrony:/sbin/nologin
-sssd:x:998:997:User for sssd:/run/sssd/:/sbin/nologin
-systemd-oom:x:999:999:systemd Userspace OOM Killer:/:/sbin/nologin
+...
 aadarsha:x:1000:1000:Aadarsha Khadka:/home/aadarsha:/bin/bash
 nobody:x:65534:65534:Kernel Overflow User:/:/usr/sbin/nologin
 [aadarsha@labserver ~]$ 
@@ -357,7 +323,6 @@ tss
 
 [aadarsha@labserver ~]$ sort /etc/passwd | cut -f 1 -d : | less
 
-
 # using uniq
 
 [aadarsha@labserver ~]$ cut -f 7 d : /etc/passwd
@@ -489,6 +454,7 @@ aadarsha:x:1000:1000:Aadarsha Khadka:/home/aadarsha:/bin/bash
 [aadarsha@labserver ~]$ grep bash -c /etc/passwd
 2
 [aadarsha@labserver ~]$ 
+
 [aadarsha@labserver ~]$ grep bash /etc/passwd | wc
       2       4     100
 [aadarsha@labserver ~]$ grep bash /etc/passwd | wc -l
@@ -511,6 +477,7 @@ aadarsha:x:1000:1000:Aadarsha Khadka:/home/aadarsha:/bin/bash
 [aadarsha@labserver ~]$ grep bash -c /etc/passwd
 2
 [aadarsha@labserver ~]$ 
+
 [aadarsha@labserver ~]$ grep bash /etc/passwd
 root:x:0:0:Super User:/root:/bin/bash
 aadarsha:x:1000:1000:Aadarsha Khadka:/home/aadarsha:/bin/bash
@@ -529,17 +496,18 @@ systemd-coredump:x:995:995:systemd Core Dumper:/:/usr/sbin/nologin
 [aadarsha@labserver ~]$ 
 
 [aadarsha@labserver ~]$ vi testdatafile
-[aadarsha@labserver ~]$ 
+
 [aadarsha@labserver ~]$ grep boy testdatafile 
 i'm a good boy
 are you a boy or girl?
 [aadarsha@labserver ~]$
 
 [aadarsha@labserver ~]$ vi testfile 
+
 [aadarsha@labserver ~]$ vi testdatafile 
-[aadarsha@labserver ~]$ 
+
 [aadarsha@labserver ~]$ grep ^boy testdatafile 
-[aadarsha@labserver ~]$ 
+ 
 [aadarsha@labserver ~]$ grep boy$ testdatafile 
 i'm a good boy
 [aadarsha@labserver ~]$ 
@@ -566,13 +534,14 @@ aadarsha:x:1000:1000:Aadarsha Khadka:/home/aadarsha:/bin/bash
 [aadarsha@labserver ~]$ 
 
 [aadarsha@labserver ~]$ vi testdatafile 
-[aadarsha@labserver ~]$ 
+
 [aadarsha@labserver ~]$ grep boy testdatafile 
 i'm a good boy
 is this boy who is the best man in the world
 are you a boy or girl?
 Boy is running and you boy?
 [aadarsha@labserver ~]$ 
+
 [aadarsha@labserver ~]$ grep Boy testdatafile 
 Boy is running and you boy?
 [aadarsha@labserver ~]$ 
@@ -607,7 +576,7 @@ Boy is running and you boy?
 [aadarsha@labserver ~]$ 
 
 [aadarsha@labserver ~]$ vi testthis 
-[aadarsha@labserver ~]$ 
+
 [aadarsha@labserver ~]$ whoami
 aadarsha
 [aadarsha@labserver ~]$ 
@@ -650,6 +619,7 @@ grep: /etc/udev/hwdb.bin: binary file matches
 [root@labserver ~]# 
 
 [root@labserver ~]# cd 
+
 [root@labserver ~]# exit
 logout
 [aadarsha@labserver ~]$ 
@@ -768,30 +738,30 @@ Boy is running?
 [aadarsha@labserver ~]$ grep 'boy and' testdatafile 
 [aadarsha@labserver ~]$ 
 ```
-
+---
 ### File Searching and finding
 ```
 # File Search
 
-# Searching Files using 'find' command
- 
-# find [path] [options] <argument>
+      # Searching Files using 'find' command
+      
+      # find [path] [options] <argument>
 
-# -atime <+N/-N/N> ---> performs access-time bases search (N-->Day)
+      # -atime <+N/-N/N> ---> performs access-time bases search (N-->Day)
 
-# -mtime <+N/-N/N> ---> performs modification-time bases search (N-->Day)
+      # -mtime <+N/-N/N> ---> performs modification-time bases search (N-->Day)
 
-# -ntime <name> ---> performs name-based bases search (case sensitive)
- 
-# -intime <name> ---> performs name-based bases search (case insensitive)
+      # -ntime <name> ---> performs name-based bases search (case sensitive)
+      
+      # -intime <name> ---> performs name-based bases search (case insensitive)
 
-# -size <+N/-N/N> --> performs size-based search
+      # -size <+N/-N/N> --> performs size-based search
 
-# -user <owner> --> performs user-ownership based search
+      # -user <owner> --> performs user-ownership based search
 
-# -group <group> --> performs group-ownership based search
+      # -group <group> --> performs group-ownership based search
 
-# -type <type> --> 
+      # -type <type> --> 
 
 [aadarsha@labserver ~]$ find / -name passwd 2>/dev/null 
 /sys/fs/selinux/class/passwd
@@ -808,7 +778,7 @@ Boy is running?
 [aadarsha@labserver ~]$ 
 
 [aadarsha@labserver ~]$ touch /tmp/passwd
-[aadarsha@labserver ~]$ 
+
 [aadarsha@labserver ~]$ find / -name passwd 2>/dev/null 
 /sys/fs/selinux/class/passwd
 /sys/fs/selinux/class/passwd/perms/passwd
@@ -873,10 +843,11 @@ find: ‘/home/aadarsha/extracted/var/log/chrony’: Permission denied
 [aadarsha@labserver ~]$ find / -mtime -7 2>/dev/null | wc -l            # modified
 77799
 [aadarsha@labserver ~]$ 
+
 [aadarsha@labserver ~]$ find /etc -mtime -7 2>/dev/null | wc -l         # modified
 7
 [aadarsha@labserver ~]$ 
-[aadarsha@labserver ~]$ 
+
 [aadarsha@labserver ~]$ find /etc -atime -7 2>/dev/null | wc -l         # accessed
 685
 [aadarsha@labserver ~]$ 
@@ -897,18 +868,10 @@ find: ‘/home/aadarsha/extracted/var/log/chrony’: Permission denied
 
 # safety and performance can not be achieved at a time
 
-
 # finding based on size
 
 [aadarsha@labserver ~]$ ls /var/l
-lib/   local/ lock/  log/   
-[aadarsha@labserver ~]$ ls /var/log/
-anaconda  cron-20260611    hawkey.log           messages           secure-20260611
-audit     dnf.librepo.log  hawkey.log-20260611  messages-20260611  spooler
-btmp      dnf.log          lastlog              private            spooler-20260611
-chrony    dnf.rpm.log      maillog              samba              sssd
-cron      firewalld        maillog-20260611     secure             wtmp
-[aadarsha@labserver ~]$ 
+lib/   local/ lock/  log/  
 
 [aadarsha@labserver ~]$ find /var -size +10M >/dev/null 
 find: ‘/var/lib/selinux/targeted/active’: Permission denied
@@ -921,15 +884,12 @@ find: ‘/var/tmp/systemd-private-6d5f834212da46da9320190dce0efa12-systemd-login
 [aadarsha@labserver ~]$ find /var -size +10M 2>/dev/null 
 /var/cache/dnf/appstream-25519c512d836b42/repodata/28fcbe99d124870c057e25d821ae6d6d4c8fa1e58c8609ffe3511cdf0fd53b66-filelists.xml.gz
 /var/cache/dnf/appstream-filenames.solvx
-[aadarsha@labserver ~]$ 
 
 [aadarsha@labserver ~]$ find /var -size +10M 2>/dev/null 
 /var/cache/dnf/appstream-25519c512d836b42/repodata/28fcbe99d124870c057e25d821ae6d6d4c8fa1e58c8609ffe3511cdf0fd53b66-filelists.xml.gz
 /var/cache/dnf/appstream-filenames.solvx
-[aadarsha@labserver ~]$ 
 
 [aadarsha@labserver ~]$ ls -lh /var/cache/dnf/appstream-25519c512d836b42/repodata/28fcbe99d124870c057e25d821ae6d6d4c8fa1e58c8609ffe3511cdf0fd53b66-filelists.xml.gz 
 -rw-r--r--. 1 root root 16M Jun  8 09:51 /var/cache/dnf/appstream-25519c512d836b42/repodata/28fcbe99d124870c057e25d821ae6d6d4c8fa1e58c8609ffe3511cdf0fd53b66-filelists.xml.gz
-[aadarsha@labserver ~]$ 
-
 ```
+---
