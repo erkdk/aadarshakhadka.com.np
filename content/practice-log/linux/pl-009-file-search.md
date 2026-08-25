@@ -1,8 +1,22 @@
 ---
-title: "Practice 009 —  File Search, Redirection & Output Control "
+title: "PL - 009 — Linux File Search, Redirection & Text Processing"
 date: 2026-06-13
 draft: false
 ---
+### Standard Streams
+Linux processes commonly use three standard file descriptors:
+| FD | Stream | Purpose |
+|---:|---|---|
+| 0 | stdin | Standard input |
+| 1 | stdout | Standard output |
+| 2 | stderr | Standard error |
+
+**Typical defaults:**
+```
+stdin  → keyboard / another command
+stdout → terminal / another command
+stderr → terminal
+```
 
 ### Terminal Session
 
@@ -11,20 +25,31 @@ draft: false
 
 # Standard Input/Output Devices
 
-# Keyboard --> Standard Input device (ch 0)
+# Keyboard        --> Standard Input device (ch 0)
 # Terminal Window --> Standard Output device (ch 1)
 # Terminal Window --> Standard Error device (ch 2)
 
 # Re-direction operators
-# > filename --> redirects the standard output to the given file (ovewrite)
+# > filename   --> redirects the standard output to the given file (ovewrite)
 
-# >> filename --> appends the standard output to the given file (no ovewrite)
+# >> filename  --> appends the standard output to the given file (append)
 
-# 2> filename --> appends the standard error to the given file ( ovewrite)
+# 2> filename  --> appends the standard error to the given file ( ovewrite)
 
 # 2>> filename --> appends the standard error to the given file ( no ovewrite)
 
-# 2> filename --> redirects the standard error to the given file ( ovewrite)
+# 2> filename  --> redirects the standard error to the given file ( ovewrite)
+
+# eg: Store stdout and stderr separately.
+command > output.log 2> error.log
+
+# eg: Redirect stdout + stderr together
+command > all.log 2>&1       or      command &> all.log 
+
+# eg: Append both: stdout + stderr
+command >> all.log 2>&1      or     command &>> all.log
+
+# Note: redirections are processed from left to right.
 
 # something left above see recording jun 12
 
@@ -32,12 +57,10 @@ draft: false
 cut_result  extracted         passwd           sort_result   testfile     words
 dir1        multiple_changes  passwd_YESLOGIN  testcompany   testthis
 dira        newfile1          secret_data      testdatafile  uniq_result
-[aadarsha@labserver ~]$ 
 
 [aadarsha@labserver ~]$ grep bash /etc/passwd
 root:x:0:0:Super User:/root:/bin/bash
 aadarsha:x:1000:1000:Aadarsha Khadka:/home/aadarsha:/bin/bash
-[aadarsha@labserver ~]$ 
 
 # This above output is standard output on terminal window
 
@@ -54,13 +77,13 @@ grep: /etc/sssd: Permission denied
 
 # results ---> standard output
 
-[aadarsha@labserver ~]$ # grep bash -r /etc > bash_output
-[aadarsha@labserver ~]$ 
+  # grep bash -r /etc > bash_output
+
 [aadarsha@labserver ~]$ ls
 cut_result  extracted         passwd           sort_result   testfile     words
 dir1        multiple_changes  passwd_YESLOGIN  testcompany   testthis
 dira        newfile1          secret_data      testdatafile  uniq_result
-[aadarsha@labserver ~]$ 
+ 
 [aadarsha@labserver ~]$ rm -r cut_result extracted/ passwd sort_result multiple_changes passwd testthis secret_data testdatafile uniq_result 
 ...
 [aadarsha@labserver ~]$ 
@@ -73,7 +96,6 @@ grep: /etc/sssd: Permission denied
 
 [aadarsha@labserver ~]$ ls
 bash_output  dir1  dira  extracted  newfile1  passwd_YESLOGIN  testcompany  testfile  words
-[aadarsha@labserver ~]$
  
 [aadarsha@labserver ~]$ cat bash_output 
 /etc/profile.d/which2.sh:# Initialization script for bash, sh, mksh and ksh
@@ -115,14 +137,12 @@ grep: /etc/sssd: Permission denied
 [aadarsha@labserver ~]$ ls
 bash_error   dir1  error      newfile1  passwd_YESLOGIN  testfile
 bash_output  dira  extracted  output    testcompany      words
-[aadarsha@labserver ~]$ 
 
 [aadarsha@labserver ~]$ grep bash -r /etc >all_output_error 2>&1
 
 [aadarsha@labserver ~]$ ls
 all_output_error  bash_output  dira   extracted  output           testcompany  words
 bash_error        dir1         error  newfile1   passwd_YESLOGIN  testfile
-[aadarsha@labserver ~]$ 
 
 [aadarsha@labserver ~]$ vi all_output_error 
 
@@ -156,19 +176,11 @@ grep: /etc/sssd: Permission denied
 all_output_error  cutout  error      output           testcompany  words
 bash_error        dir1    extracted  passwd_YESLOGIN  testfile
 bash_output       dira    newfile1   sort_out         uniq_out
-[aadarsha@labserver ~]$ 
-
-[aadarsha@labserver ~]$ ls
-all_output_error  cutout  error      output           testcompany  words
-bash_error        dir1    extracted  passwd_YESLOGIN  testfile
-bash_output       dira    newfile1   sort_out         uniq_out
-[aadarsha@labserver ~]$ 
 
 [aadarsha@labserver ~]$ vi imp_output
 
 [aadarsha@labserver ~]$ cat imp_output 
 this file contains the imp data.....
-[aadarsha@labserver ~]$ 
 
 [aadarsha@labserver ~]$ grep bash -r /etc >imp_output 
 grep: /etc/crypttab: Permission denied
@@ -193,8 +205,6 @@ grep: /etc/sssd: Permission denied
 cat: new: No such file or directory
 [aadarsha@labserver ~]$ cat new_output 
 this is important data file which is new....
-
-[aadarsha@labserver ~]$ 
 
 [aadarsha@labserver ~]$ grep bash -r /etc/passwd >> new_output 
 
@@ -228,7 +238,6 @@ aadarsha:x:1000:1000:Aadarsha Khadka:/home/aadarsha:/bin/bash
 all_output_error  cutout  error       newfile1    passwd_YESLOGIN  testfile
 bash_error        dir1    extracted   new_output  sort_out         uniq_out
 bash_output       dira    imp_output  output      testcompany      words
-[aadarsha@labserver ~]$ 
 
 [aadarsha@labserver ~]$ cat output 
 /etc/profile.d/which2.sh:# Initialization script for bash, sh, mksh and ksh
@@ -244,7 +253,6 @@ bash_output       dira    imp_output  output      testcompany      words
 all_output_error  cutout  error       newfile1    passwd_YESLOGIN  testfile
 bash_error        dir1    extracted   new_output  sort_out         uniq_out
 bash_output       dira    imp_output  output      testcompany      words
-[aadarsha@labserver ~]$ 
 
 [aadarsha@labserver ~]$ tr 'a-z' 'A-Z' <cutout 
 /BIN/BASH
@@ -267,15 +275,13 @@ bash_output       dira    imp_output  output      testcompany      words
 [aadarsha@labserver ~]$ ls
 all_output_error  cutout  dira       imp_output  output           testcompany  words
 bash_error        CUTOUT  error      newfile1    passwd_YESLOGIN  testfile
-bash_output       dir1    extracted  new_output  sort_out         uniq_out
-[aadarsha@labserver ~]$ 
+bash_output       dir1    extracted  new_output  sort_out         uniq_out 
 
 [aadarsha@labserver ~]$ cat CUTOUT 
 /BIN/BASH
 /USR/SBIN/NOLOGIN
 ...
 /BIN/BASH
-[aadarsha@labserver ~]$ 
 [aadarsha@labserver ~]$ 
 
 # redirection can be used for any commands
@@ -303,20 +309,17 @@ Mon Jun 15 04:59:06 PM +0545 2026
 [aadarsha@labserver ~]$ 
 
 [aadarsha@labserver ~]$ su - root
-Password: 
-Last login: Mon Jun 15 16:48:46 +0545 2026 on pts/0
-[root@labserver ~]# 
 
 [root@labserver ~]# find /etc -name passwd
 /etc/passwd
 /etc/pam.d/passwd
+
 [root@labserver ~]# find /etc -name passwd 2>/dev/null
 /etc/passwd
 /etc/pam.d/passwd
-[root@labserver ~]# 
+
 [root@labserver ~]# exit
 logout
-[aadarsha@labserver ~]$ 
 
 [aadarsha@labserver ~]$ find /etc -name passwd 
 find: ‘/etc/lvm/devices’: Permission denied
@@ -328,13 +331,12 @@ find: ‘/etc/sssd’: Permission denied
 [aadarsha@labserver ~]$ find /etc -name passwd 2>/dev/null 
 /etc/passwd
 /etc/pam.d/passwd
-[aadarsha@labserver ~]$ 
 
 [aadarsha@labserver ~]$ touch /tmp/passwd
+
 [aadarsha@labserver ~]$ find /etc -name passwd 2>/dev/null
 /etc/passwd
 /etc/pam.d/passwd
-[aadarsha@labserver ~]$ 
 
 [aadarsha@labserver ~]$ find / -name passwd 2>/dev/null
 /sys/fs/selinux/class/passwd
@@ -359,7 +361,7 @@ find: ‘/etc/sssd’: Permission denied
 [aadarsha@labserver ~]$ 
 
 [aadarsha@labserver ~]$ touch /tmp/PassWD
-[aadarsha@labserver ~]$ 
+
 [aadarsha@labserver ~]$ find / -iname passwd 2>/dev/null
 /sys/fs/selinux/class/passwd
 /sys/fs/selinux/class/passwd/perms/passwd
@@ -402,57 +404,59 @@ find: ‘/etc/lvm/cache’: Permission denied
 
 [aadarsha@labserver ~]$ find / -atime -2 2>/dev/null | wc -l
 83501
+
 [aadarsha@labserver ~]$ find / -mtime -2 2>/dev/null | wc -l
 76970
-[aadarsha@labserver ~]$ 
+
 [aadarsha@labserver ~]$ find / -atime -2 2>/dev/null | wc -l
 83268
-[aadarsha@labserver ~]$ 
+ 
 [aadarsha@labserver ~]$ find / -atime -2 | wc -l
 find: ‘/boot/efi/EFI/centos’: Permission denied
 find: ‘/boot/grub2’: Permission denied
 
+[aadarsha@labserver ~]$ find / -atime -2 2>/dev/null | wc -l
+83501
+
+[aadarsha@labserver ~]$ find / -mtime -2 2>/dev/null | wc -l
+76970
+
+[aadarsha@labserver ~]$ find /etc -mtime -2 2>/dev/null | wc -l
+2
+
+[aadarsha@labserver ~]$ find / -mtime -2 2>/dev/null | wc -l
+76970
+
+[aadarsha@labserver ~]$ find /etc -atime -2 2>/dev/null | wc -l
+323
 
 [aadarsha@labserver ~]$ find / -atime -2 2>/dev/null | wc -l
 83501
-[aadarsha@labserver ~]$ find / -mtime -2 2>/dev/null | wc -l
-76970
-[aadarsha@labserver ~]$ 
-[aadarsha@labserver ~]$ find /etc -mtime -2 2>/dev/null | wc -l
-2
-[aadarsha@labserver ~]$ find / -mtime -2 2>/dev/null | wc -l
-76970
-[aadarsha@labserver ~]$ find /etc -atime -2 2>/dev/null | wc -l
-323
-[aadarsha@labserver ~]$ 
 
+[aadarsha@labserver ~]$ find / -mtime -2 2>/dev/null | wc -l
+76970
 
-[aadarsha@labserver ~]$ find / -atime -2 2>/dev/null | wc -l
-83501
-[aadarsha@labserver ~]$ find / -mtime -2 2>/dev/null | wc -l
-76970
-[aadarsha@labserver ~]$ 
 [aadarsha@labserver ~]$ find /etc -mtime -2 2>/dev/null | wc -l
 2
+
 [aadarsha@labserver ~]$ find / -mtime -2 2>/dev/null | wc -l
 76970
+
 [aadarsha@labserver ~]$ find /etc -atime -2 2>/dev/null | wc -l
 323
-[aadarsha@labserver ~]$ 
-[aadarsha@labserver ~]$ 
-[aadarsha@labserver ~]$ 
-[aadarsha@labserver ~]$ 
+
 [aadarsha@labserver ~]$ find /etc -atime -2 2>/dev/null | wc -l
 323
+
 [aadarsha@labserver ~]$ find /etc -mtime -2 2>/dev/null | wc -l
 2
-[aadarsha@labserver ~]$ 
+ 
 [aadarsha@labserver ~]$ find /var/l
 lib/   local/ lock/  log/   
+
 [aadarsha@labserver ~]$ find /var -size +10M 2>/dev/null 
 /var/cache/dnf/appstream-25519c512d836b42/repodata/28fcbe99d124870c057e25d821ae6d6d4c8fa1e58c8609ffe3511cdf0fd53b66-filelists.xml.gz
 /var/cache/dnf/appstream-filenames.solvx
-[aadarsha@labserver ~]$ 
 
 [aadarsha@labserver ~]$ find /var -size +10M
 find: ‘/var/lib/selinux/targeted/active’: Permission denied
@@ -471,9 +475,6 @@ find: ‘/var/tmp/systemd-private-e670512019ad43ffb843c29fe99f0b06-systemd-login
 [aadarsha@labserver ~]$ 
 
 [aadarsha@labserver ~]$ su - root
-Password: 
-Last login: Mon Jun 15 16:59:23 +0545 2026 on pts/0
-[root@labserver ~]# 
 
 [root@labserver ~]# find /var/log -size +1M
 /var/log/audit/audit.log
@@ -516,10 +517,10 @@ find: ‘/var/log/chrony’: Permission denied
 -rw-------. 1 root root 1.4M Jun 11 05:39 /var/log/messages-20260611
 [aadarsha@labserver ~]$ 
  
-[aadarsha@labserver ~]$ # find /var/log -size +1M -exec ls -ldh {} \;
-[aadarsha@labserver ~]$ # --->finding-part<------ ---->processing-part<--
+ # find /var/log -size +1M -exec ls -ldh {} \;
+ # --->finding-part<------ ---->processing-part<--
 
-[aadarsha@labserver ~]$ # --->finding-part<------|---->processing-part<--
+ # --->finding-part<------|---->processing-part<--
 
 # exec --> execute action on the found files without asking for confirmation
 # ok   --> execute action on the found files after asking for confirmation
@@ -577,11 +578,9 @@ find: ‘/var/log/chrony’: Permission denied
  
 [root@labserver ~]# ls /root/largefiles/
 audit.log  journal.log  messages-20260611
-[root@labserver ~]# 
 
 [root@labserver ~]# ls -ldh /root/largefiles/
 drwxr-xr-x. 2 root root 67 Jun 15 18:17 /root/largefiles/
-[root@labserver ~]# 
 
 [root@labserver ~]# ls -lh /root/largefiles/
 total 5.1M
@@ -590,53 +589,49 @@ total 5.1M
 -rw-------. 1 root root 1.4M Jun 11 05:39 messages-20260611
 [root@labserver ~]# 
 
-[root@labserver ~]# # eg: back of .conf type of files 
+# eg: back of .conf type of files 
 
 [root@labserver ~]# mkdir -p /root/confbkp
 
 [root@labserver ~]# ls -ldh /root/confbkp
 drwxr-xr-x. 2 root root 6 Jun 15 18:18 /root/confbkp
-[root@labserver ~]# 
 
 [root@labserver ~]# find /etc -name *.conf -exec cp -p {} /root/confbkp \;
 
 [root@labserver ~]# ls -ldh /root/confbkp
 drwxr-xr-x. 2 root root 4.0K Jun 15 18:22 /root/confbkp
-[root@labserver ~]#
  
 [root@labserver ~]# rm -r /root/confbkp/*
 rm: remove regular file '/root/confbkp/00-keyboard.conf'? ^C
-[root@labserver ~]# 
 
 [root@labserver ~]# unalias rm
-[root@labserver ~]# 
+
 [root@labserver ~]# rm -r /root/confbkp/*
-[root@labserver ~]# 
+
 [root@labserver ~]# ls -ldh /root/confbkp
 drwxr-xr-x. 2 root root 6 Jun 15 18:51 /root/confbkp
-[root@labserver ~]# 
 
 [root@labserver ~]# ls /root/confbkp | wc -l
 0
-[root@labserver ~]# 
+
 [root@labserver ~]# find /etc -name *.conf -exec cp -p {} /root/confbkp \;
-[root@labserver ~]# 
+
 [root@labserver ~]# ls /root/confbkp | wc -l
 75
-[root@labserver ~]# 
+
 [root@labserver ~]# ls -ldh /root/confbkp
 drwxr-xr-x. 2 root root 4.0K Jun 15 18:53 /root/confbkp
 [root@labserver ~]# 
 
-# Using Logical Operators with find
-[root@labserver ~]# 
-[root@labserver ~]# # -and --> logical AND
-[root@labserver ~]# # -o   -->  logical OR
-[root@labserver ~]# # !  -->  logical NOT
+ # Using Logical Operators with find
+
+ # -and --> logical AND
+ # -o   -->  logical OR
+ # !  -->  logical NOT
 
 [root@labserver ~]# find /var/log --size +1M -and -size -3M
 find: unknown predicate `--size'
-[root@labserver ~]# 
+
 [root@labserver ~]# find /var/log -size +1M -and -size -3M
 /var/log/audit/audit.log
 /var/log/messages-20260611
@@ -662,7 +657,7 @@ drwxr-x---. 4 root root 100 May 26 15:33 /etc/audit
  
 [root@labserver ~]# find /var/log -size +10M -o -size -10K -exec ls -lh {} \;
 find: invalid -size type `K'
-[root@labserver ~]# 
+
 [root@labserver ~]# find /var/log -size +10M -o -size -10k -exec ls -lh {} \;
 total 2.2M
 drwxr-xr-x. 2 root   root   4.0K May 26 15:37 anaconda
@@ -673,36 +668,38 @@ drwxr-x---. 2 chrony chrony    6 Nov 20  2025 chrony
 ...
 ... 
 [root@labserver ~]# 
+
 [root@labserver ~]# find /var/log -size +10M -o -size -10k -exec ls -lh {} \; | wc -l
 61
-[root@labserver ~]# 
 
 [root@labserver ~]# ls /home/
 aadarsha  milan  suman  user1  user2
-[root@labserver ~]# 
 
 [root@labserver ~]# su - user2
-[user2@labserver ~]$ 
+
 [user2@labserver ~]$ touch f1 f2 f3
+
 [user2@labserver ~]$ ls
 f1  f2  f3
+
 [user2@labserver ~]$ ls -l
 total 0
 -rw-r--r--. 1 user2 user2 0 Jun 15 19:12 f1
 -rw-r--r--. 1 user2 user2 0 Jun 15 19:12 f2
 -rw-r--r--. 1 user2 user2 0 Jun 15 19:12 f3
-[user2@labserver ~]$ 
 [user2@labserver ~]$ exit
 logout
-[root@labserver ~]# 
+ 
 [root@labserver ~]# su - user1
-[user1@labserver ~]$ 
+
 [user1@labserver ~]$ pwd
 /home/user1
-[user1@labserver ~]$ 
+
 [user1@labserver ~]$ touch abc0 abc1 abc2 abc3
+
 [user1@labserver ~]$ ls
 abc0  abc1  abc2  abc3
+
 [user1@labserver ~]$ ls -l
 total 0
 -rw-r--r--. 1 user1 user1 0 Jun 15 19:14 abc0
@@ -713,7 +710,7 @@ total 0
 
 [user1@labserver ~]$ exit
 logout
-[root@labserver ~]# 
+
 [root@labserver ~]# find /home -user user1
 /home/user1
 /home/user1/.bash_logout
@@ -750,61 +747,53 @@ logout
 
 [root@labserver ~]# find /home -user user1 -o user user2 -exec cp -p {} /bkp \;
 find: paths must precede expression: `user'
-[root@labserver ~]# 
+
 [root@labserver ~]# ls -l /bkp
 total 0
-[root@labserver ~]# 
 
 [root@labserver ~]# find /home /(-user user1 -o user user2\) -exec cp -p {} /bkp \;
 -bash: syntax error near unexpected token `('
+
 [root@labserver ~]# find /home /(-user user1 -o user user2/) -exec cp -p {} /bkp \;
 -bash: syntax error near unexpected token `('
-[root@labserver ~]# 
 
 [root@labserver ~]# find /home \(-user user1 -o user user2\) -exec cp -p {} /bkp \;
 find: paths must precede expression: `user'
-[root@labserver ~]# 
 
 [root@labserver ~]# find /home \(-user user1 -o -user user2\) -exec cp -p {} /bkp \;
 find: invalid user name or UID argument to -user: ‘user2)’
-[root@labserver ~]# 
 
 [root@labserver ~]# find /home \( -user user1 -o -user user2 \) -exec cp -p {} /bkp \;
 cp: -r not specified; omitting directory '/home/user1'
 cp: -r not specified; omitting directory '/home/user2'
-[root@labserver ~]# 
 
 [root@labserver ~]# ls /bkp
 abc0  abc1  abc2  abc3  f1  f2  f3
-[root@labserver ~]# 
  
 [root@labserver ~]# find /home \( -user user1 -o -user user2 \) -exec cp -p {} /bkp \;
 cp: -r not specified; omitting directory '/home/user1'
 cp: -r not specified; omitting directory '/home/user2'
-[root@labserver ~]# 
 
 [root@labserver ~]# ls /bkp
 abc0  abc1  abc2  abc3  f1  f2  f3
-[root@labserver ~]# 
 
 [root@labserver ~]# find / -group marketting
 find: invalid group name or GID argument to -group: ‘marketting’
-[root@labserver ~]# 
-[root@labserver ~]# # find / -group marketting
+
+# find / -group marketting
 
 [root@labserver ~]# find /etc -type l | wc -l
 707
-[root@labserver ~]# 
+
 [root@labserver ~]# find /etc -type d | wc -l
 195
-[root@labserver ~]# 
+
 [root@labserver ~]# find /etc -type f | wc -l
 488
-[root@labserver ~]# 
-[root@labserver ~]# 
+
 [root@labserver ~]# find /home -user aadarsha | wc -l
 41
-[root@labserver ~]# 
+
 [root@labserver ~]# find /home ! c-user aadarsha | wc -l
 find: paths must precede expression: `c-user'
 0
@@ -814,37 +803,28 @@ find: paths must precede expression: `c-user'
 85
 [root@labserver ~]# 
  
-[root@labserver ~]# find /home \( -user user1 -o -user user2 \) -exec ll {} /bkp \;
-find: ‘ll’: No such file or directory
-find: ‘ll’: No such file or directory
-find: ‘ll’: No such file or directory
-find: ‘ll’: No such file or directory
-[root@labserver ~]# 
-
 [root@labserver ~]# find /home \( -user user1 -o -user user2 \) -exec ls -l {} /bkp \;
 /bkp:
 
 [root@labserver ~]# touch emp1 emp2 emp3 emp4
+
 [root@labserver ~]# ls
 anaconda-ks.cfg  confbkp  emp1  emp2  emp3  emp4  largefiles
-[root@labserver ~]# 
 
 [root@labserver ~]# pwd
 /root
-[root@labserver ~]# 
-[root@labserver ~]# find -size 0
-./emp1
-./emp2
-./emp3
-./emp4
-[root@labserver ~]# 
 
 [root@labserver ~]# find -size 0
 ./emp1
 ./emp2
 ./emp3
 ./emp4
-[root@labserver ~]# 
+
+[root@labserver ~]# find -size 0
+./emp1
+./emp2
+./emp3
+./emp4
 
 [root@labserver ~]# find -size 0 -exec rm -f {} \;
 
@@ -852,7 +832,6 @@ anaconda-ks.cfg  confbkp  emp1  emp2  emp3  emp4  largefiles
 
 [root@labserver ~]# ls
 anaconda-ks.cfg  confbkp  largefiles
-[root@labserver ~]# 
 
 [root@labserver ~]# ls /root/confbkp/
 00-keyboard.conf                  grub2-pc.conf                pwhistory.conf
@@ -883,14 +862,14 @@ group.conf                        pam_env.conf                 yum.conf
 [root@labserver ~]# 
 
 [root@labserver ~]# cd /root/confbkp/
-[root@labserver confbkp]# 
+
 [root@labserver confbkp]# touch f1 f2 f3
-[root@labserver confbkp]# 
+
 [root@labserver confbkp]# cd
 [root@labserver ~]# 
 
 [root@labserver ~]# find /root/confbkp/ -name *.conf -exec mv {} {}.bak \;
-[root@labserver ~]# 
+
 [root@labserver ~]# ls /root/confbkp
 00-keyboard.conf.bak.conf.bak                  ld.so.conf.bak.conf.bak
 01-permitrootlogin.conf.bak.conf.bak           libaudit.conf.bak.conf.bak
@@ -937,15 +916,18 @@ ldap.conf.bak.conf.bak                         yum.conf.bak.conf.bak
 
 [root@labserver ~]# ls
 anaconda-ks.cfg  confbkp  f1  f2  f3  largefiles
-[root@labserver ~]# 
 
 [root@labserver ~]# mkdir logdir
+
 [root@labserver ~]# ls
 anaconda-ks.cfg  confbkp  f1  f2  f3  largefiles  logdir
+
 [root@labserver ~]# cd logdir/
+
 [root@labserver logdir]# 
 
 [root@labserver logdir]# vi app.log
+
 [root@labserver logdir]# cat app.log 
 INFO Application started successfully
 INFO User Alice logged in
@@ -963,6 +945,7 @@ INFO User Alice logged out
 [root@labserver logdir]# 
 
 [root@labserver logdir]# vi employees.csv
+
 [root@labserver logdir]# cat employees.csv 
 empid,name,destination,department,salary
 E001,Ram Bahadur Thapa,Manager,Administration,85000
@@ -998,6 +981,7 @@ INFO User Alice logged out
 [root@labserver logdir]# 
 
 [root@labserver logdir]# sed 's/ERROR/CRITICAL/g' app.log >criticallogs
+
 [root@labserver logdir]# ls
 app.log  criticallogs  employees.csv
 [root@labserver logdir]# cat criticallogs 
@@ -1057,7 +1041,6 @@ CRITICAL Database connection lost
 
 [root@labserver logdir]# sed 's/Database/Postgres Database' app.log 
 sed: -e expression #1, char 28: unterminated `s' command
-[root@labserver logdir]# 
 
 [root@labserver logdir]# sed 's/Database/Postgres Database/g' app.log 
 INFO Application started successfully
@@ -1137,7 +1120,6 @@ INFO User Alice logged out
 
 [root@labserver logdir]# ls
 app.log  criticallogs  employees.csv  noinfo.log
-[root@labserver logdir]# 
 
 [root@labserver logdir]# man sed
  
@@ -1155,7 +1137,6 @@ CRITICAL Database connection lost
 
 [root@labserver logdir]# ls
 app.log  criticallogs  employees.csv  noinfo.log
-[root@labserver logdir]# 
 
 [root@labserver logdir]# cat employees.csv 
 empid,name,destination,department,salary
@@ -1215,7 +1196,6 @@ Prakash Tamang 55000
 
 [root@labserver logdir]# awk -F ',' '$5 >70000' '{print $2, $5}' employees.csv 
 awk: fatal: cannot open file `{print $2, $5}' for reading: No such file or directory
-[root@labserver logdir]# 
 
 [root@labserver logdir]# awk -F ',' '$5 >70000 {print $2, $5}' employees.csv 
 name salary
@@ -1224,3 +1204,4 @@ Hari Prasad Adhikari 78000
 Sujan Shrestha 75000
 [root@labserver logdir]# 
 ```
+---
