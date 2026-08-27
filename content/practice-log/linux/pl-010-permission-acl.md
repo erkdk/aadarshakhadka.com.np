@@ -1,5 +1,5 @@
 ---
-title: "Practice 010 —  File Permission and Access Control Management"
+title: "PL - 010 —  File Permission and Access Control Management"
 date: 2026-06-16
 draft: false
 ---
