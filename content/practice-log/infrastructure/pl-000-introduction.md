@@ -1256,3 +1256,51 @@ Connection to prodserver closed.
 [cnode@control-node ~]$ 
 ```
 ---
+
+```
+# Validation:
+  # Verify SSH public-key authentication from the control node to all managed
+  # hosts and confirm that the cnode account can obtain root privileges
+  # non-interactively via sudo.
+  #
+  # Password authentication is disabled and BatchMode is enabled to ensure
+  # the test succeeds only through non-interactive SSH authentication.
+
+[cnode@control-node ~]$ ls
+[cnode@control-node ~]$ vi validate_nodes.sh
+[cnode@control-node ~]$ cat validate_nodes.sh 
+#!/bin/bash
+
+nodes=(dev1 dev2 testserver prodserver)
+
+for host in "${nodes[@]}";
+do
+   echo "----- $host -----"
+
+   ssh -o BatchMode=yes \
+       -o PasswordAuthentication=no \
+       "cnode@$host" 'hostname; sudo -n whoami'
+    
+   echo
+done
+[cnode@control-node ~]$ chmod +x validate_nodes.sh
+[cnode@control-node ~]$ ./validate_nodes.sh
+----- dev1 -----
+dev1
+root
+
+----- dev2 -----
+dev2
+root
+
+----- testserver -----
+testserver
+root
+
+----- prodserver -----
+prodserver
+root
+
+[cnode@control-node ~]$ 
+```
+---
