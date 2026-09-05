@@ -1,5 +1,5 @@
 ---
-title: "PL - 001 — Infrastructure Automation & Ansible | Local Linux Lab Environment for Ansible"
+title: "Infrastructure Automation & Ansible | Local Linux Lab Environment for Ansible"
 date: 2026-08-31
 draft: false
 ---
