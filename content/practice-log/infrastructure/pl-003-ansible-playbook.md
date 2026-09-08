@@ -364,3 +364,133 @@ testserver                 : ok=5    changed=0    unreachable=0    failed=0    s
 
 [cnode@control-node ansible-lab]$
 ```
+
+---
+
+### Undeploy the Apache web server.
+
+```
+[cnode@control-node ansible-lab]$ ls
+ansible.cfg  files  inventory  webserver.yml
+[cnode@control-node ansible-lab]$ cp webserver.yml undeploy-webserver.yml
+[cnode@control-node ansible-lab]$ vim undeploy-webserver.yml
+[cnode@control-node ansible-lab]$ ansible-doc firewalld
+...
+
+[cnode@control-node ansible-lab]$ vim undeploy-webserver.yml 
+[cnode@control-node ansible-lab]$ cat undeploy-webserver.yml
+---
+
+- name: Undeploy Apache web server
+  hosts: testprod
+  
+  tasks:
+
+  # Remove the HTTP service from firewalld.
+  - name: Remove HTTP traffic from the firewall
+    ansible.posix.firewalld:
+      service: http
+      state: disabled
+      permanent: true
+      immediate: true
+
+  # Stop Apache and prevent it from starting automatically
+  - name: Stop and disable Apache service
+    ansible.builtin.service:
+      name: httpd
+      state: stopped
+      enabled: false
+
+  # Remove the deployed website.
+  - name: Remove website index page
+    ansible.builtin.file:
+      path: /var/www/html/index.html
+      state: absent
+
+  # Uninstall the Apache HTTP server package.
+  - name: Remove Apache web server
+    ansible.builtin.yum:
+      name: httpd
+      state: absent
+[cnode@control-node ansible-lab]$ ansible-playbook undeploy-webserver.yml --syntax-check
+
+playbook: undeploy-webserver.yml
+[cnode@control-node ansible-lab]$ ansible testprod --list-hosts
+  hosts (2):
+    testserver
+    prodserver
+[cnode@control-node ansible-lab]$ ansible-playbook --check undeploy-webserver.yml
+
+PLAY [Undeploy Apache web server] ***************************************************
+
+TASK [Gathering Facts] **************************************************************
+ok: [prodserver]
+ok: [testserver]
+
+TASK [Remove HTTP traffic from the firewall] ****************************************
+changed: [prodserver]
+changed: [testserver]
+
+TASK [Stop and disable Apache service] **********************************************
+changed: [prodserver]
+changed: [testserver]
+
+TASK [Remove website index page] ****************************************************
+changed: [testserver]
+changed: [prodserver]
+
+TASK [Remove Apache web server] *****************************************************
+changed: [prodserver]
+changed: [testserver]
+
+PLAY RECAP **************************************************************************
+prodserver                 : ok=5    changed=4    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+testserver                 : ok=5    changed=4    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+
+[cnode@control-node ansible-lab]$ ansible-playbook undeploy-webserver.yml
+
+PLAY [Undeploy Apache web server] ***************************************************
+
+TASK [Gathering Facts] **************************************************************
+ok: [testserver]
+ok: [prodserver]
+
+TASK [Remove HTTP traffic from the firewall] ****************************************
+changed: [prodserver]
+changed: [testserver]
+
+TASK [Stop and disable Apache service] **********************************************
+changed: [prodserver]
+changed: [testserver]
+
+TASK [Remove website index page] ****************************************************
+changed: [testserver]
+changed: [prodserver]
+
+TASK [Remove Apache web server] *****************************************************
+changed: [prodserver]
+changed: [testserver]
+
+PLAY RECAP **************************************************************************
+prodserver                 : ok=5    changed=4    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+testserver                 : ok=5    changed=4    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+
+[cnode@control-node ansible-lab]$ 
+
+[cnode@control-node ansible-lab]$ ansible testprod -m command -a "systemctl is-active httpd"
+testserver | FAILED | rc=4 >>
+inactivenon-zero return code
+prodserver | FAILED | rc=4 >>
+inactivenon-zero return code
+
+[cnode@control-node ansible-lab]$ ansible testprod -m command -a "rpm -q httpd"
+testserver | FAILED | rc=1 >>
+package httpd is not installednon-zero return code
+prodserver | FAILED | rc=1 >>
+package httpd is not installednon-zero return code
+[cnode@control-node ansible-lab]$ curl http://testserver
+curl: (7) Failed to connect to testserver port 80 after 1 ms: Could not connect to server
+[cnode@control-node ansible-lab]$ curl http://prodserver
+curl: (7) Failed to connect to prodserver port 80 after 1 ms: Could not connect to server
+[cnode@control-node ansible-lab]$ 
+```
