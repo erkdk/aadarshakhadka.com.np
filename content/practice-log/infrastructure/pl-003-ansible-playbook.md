@@ -32,7 +32,7 @@ The complete manual process is:
 	                    	  ↓
 	                    Test website
 	                        curl http://localhost
- ```
+```
 ```
 [cnode@control-node ~]$ ls
 ansible-lab  validate_nodes.sh
