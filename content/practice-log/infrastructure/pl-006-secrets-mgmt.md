@@ -1,5 +1,5 @@
 ---
-title: "PL - 004 — Ansible Practice: Managing Secrets, Ansible Facts"
+title: "PL - 006 — Ansible Practice: Managing Secrets, Ansible Facts"
 date: 2026-09-12
 draft: false
 ---

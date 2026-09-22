@@ -1,5 +1,5 @@
 ---
-title: "PL - 004 — Ansible Practice: Variables, Loops, Register, and Debug"
+title: "PL - 005 — Ansible Practice: Variables, Loops, Register, and Debug"
 date: 2026-09-10
 draft: false
 ---
