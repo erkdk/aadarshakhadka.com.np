@@ -1,6 +1,6 @@
 ---
 title: "PL - 007 — Ansible Loops, Conditionals, Variables and User Management"
-date: 2026-09-22
+date: 2026-09-15
 draft: false
 ---
 
