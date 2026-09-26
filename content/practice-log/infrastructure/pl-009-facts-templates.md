@@ -1,5 +1,5 @@
 ---
-title: "PL - 006 — Ansible Lab: Facts, Jinja2 Templates, Loops, Variables, Conditionals, and User Management"
+title: "PL - 009 — Ansible Lab: Facts, Jinja2 Templates, Loops, Variables, Conditionals, and User Management"
 date: 2026-09-20
 draft: false
 ---
