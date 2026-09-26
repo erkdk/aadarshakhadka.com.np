@@ -1,5 +1,5 @@
 ---
-title: "PL - 008 — Ansible Practice: Ansible Inclusion with Variables, Tasks, and Playbooks"
+title: "PL - 011 — Ansible Practice: Ansible Inclusion with Variables, Tasks, and Playbooks"
 date: 2026-09-16
 draft: false
 ---
