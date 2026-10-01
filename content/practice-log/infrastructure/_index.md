@@ -1,5 +1,5 @@
 ---
-title: "Infrastructure Automation"
+title: "Infrastructure & Automation"
 date: 
 draft: 
 ---
