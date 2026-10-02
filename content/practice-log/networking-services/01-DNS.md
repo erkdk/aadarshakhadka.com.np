@@ -8,7 +8,8 @@ draft: false
 
 DNS (Domain Name System) is a distributed naming system that translates human-readable names into network addresses and provides other information about network services.
 
-- Usecase:
+#### Usecase:
+- Forward Lookup:
 ```
 Hostname / Domain Name --> IP Address
 ```
@@ -16,6 +17,7 @@ For example:
 ```
 webserver.example.com --> 192.168.254.22
 ```
+- Reverse Lookup:
 DNS can also perform the reverse:
 ```
 IP Address --> Hostname
