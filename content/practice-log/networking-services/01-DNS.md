@@ -864,4 +864,23 @@ active
 enabled
 [aadarkhadka@dnsserver ~]$ 
 ```
+```
+[aadarkhadka@client ~]$ nslookup webserver.lab.local
+Server:		192.168.254.20
+Address:	192.168.254.20#53
+
+Name:	webserver.lab.local
+Address: 192.168.254.22
+
+[aadarkhadka@client ~]$ 
+
+[aadarkhadka@client ~]$ nslookup fileserver.lab.local
+Server:		192.168.254.20
+Address:	192.168.254.20#53
+
+Name:	fileserver.lab.local
+Address: 192.168.254.24
+
+[aadarkhadka@client ~]$
+```
 ---
