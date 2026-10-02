@@ -884,6 +884,10 @@ Address: 192.168.254.24
 [aadarkhadka@client ~]$
 ```
 ```
+[aadarkhadka@client ~]$ host -t ns lab.local
+lab.local name server dnsserver.lab.local.
+[aadarkhadka@client ~]$
+
 [aadarkhadka@client ~]$ nslookup 192.168.254.22
 22.254.168.192.in-addr.arpa	name = webserver.lab.local.
 
