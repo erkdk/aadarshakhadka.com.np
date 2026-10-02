@@ -883,4 +883,19 @@ Address: 192.168.254.24
 
 [aadarkhadka@client ~]$
 ```
+```
+[aadarkhadka@client ~]$ nslookup 192.168.254.22
+22.254.168.192.in-addr.arpa	name = webserver.lab.local.
+
+[aadarkhadka@client ~]$ nslookup 192.168.254.23
+23.254.168.192.in-addr.arpa	name = dbserver.lab.local.
+
+[aadarkhadka@client ~]$ nslookup 192.168.254.24
+24.254.168.192.in-addr.arpa	name = fileserver.lab.local.
+
+[aadarkhadka@client ~]$ nslookup 192.168.254.20
+20.254.168.192.in-addr.arpa	name = dnsserver.lab.local.
+
+[aadarkhadka@client ~]$ 
+```
 ---
